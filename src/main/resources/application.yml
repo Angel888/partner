@@ -1,0 +1,75 @@
+spring:
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+      additional-paths: src/main/java #重启目录
+      exclude: WEB-INF/**  #排除文件(不重启项目)
+  freemarker:
+    cache: false    #页面不加载缓存，修改即时生效
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1/partner?autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=true&allowMultiQueries=true
+    username: wlj
+    password: 1
+    druid:
+      initial-size: 3
+      max-active: 20
+      min-idle: 3
+      max-wait: 60000
+      validation-query: select 1 from DUAL
+  thymeleaf:
+    prefix: classpath:/templates/
+    check-template-location: true
+    suffix: .html
+    encoding: UTF-8
+    mode: LEGACYHTML5
+    cache: false
+server:
+  port: 8666
+#  session:
+#    timeout:86400
+#  servlet:
+#    context-path: /main    #项目访问路径
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6379
+  #redis-cli -h 127.0.0.1 -p 30020 -a 1qaz2wsx.
+  thymeleaf:
+    prefix: classpath:/templates/
+    check-template-location: true
+    suffix: .html
+    encoding: UTF-8
+    mode: LEGACYHTML5
+    cache: false
+debug:
+  true
+application:
+  activities:
+    - scheme: travel
+      fields:
+        -
+          name: city
+          question: 哪个城市？| 城市？
+        -
+          name: attraction
+          question: 哪个景点？
+        -
+          name: date
+          question: 什么时候？
+    - scheme: sport
+      fields:
+        - name: city
+          question: 哪个城市？
+        - name: name
+          question: 什么运动？
+          options: 篮球,羽毛球,乒乓球   # 可以增加默认选项
+
+
+
+
+
