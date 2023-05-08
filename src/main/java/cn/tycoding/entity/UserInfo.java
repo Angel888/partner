@@ -9,15 +9,15 @@ import java.io.Serializable;
  * @date 2019-06-13
  */
 @Data
-public class User implements Serializable {
+public class UserInfo implements Serializable {
 
     private Long id;
 
-    private String name;
+    private String nickname;
 
     private String avatar;
 
     public void setName(String name) {
-        this.name = name.trim();
+        this.nickname = name.trim();
     }
 }

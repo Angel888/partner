@@ -30,10 +30,10 @@ spring:
     cache: false
 server:
   port: 8666
-#  session:
-#    timeout:86400
-#  servlet:
-#    context-path: /main    #项目访问路径
+  #  session:
+  #    timeout:86400
+  #  servlet:
+  #    context-path: /main    #项目访问路径
   redis:
     database: 1
     host: 127.0.0.1
@@ -48,18 +48,16 @@ server:
     cache: false
 debug:
   true
+---
 application:
   activities:
     - scheme: travel
       fields:
-        -
-          name: city
-          question: 哪个城市？| 城市？
-        -
-          name: attraction
+        - name: city
+          question: 哪个城市？
+        - name: attraction
           question: 哪个景点？
-        -
-          name: date
+        - name: date
           question: 什么时候？
     - scheme: sport
       fields:
@@ -67,7 +65,19 @@ application:
           question: 哪个城市？
         - name: name
           question: 什么运动？
-          options: 篮球,羽毛球,乒乓球   # 可以增加默认选项
+          options:
+            - 篮球
+            - 羽毛球
+            - 乒乓球
+            # 可以增加默认选项
+
+---
+name: test-YAML
+environment: testing
+enabled: false
+servers:
+  - www.abc.test.com
+  - www.xyz.test.com
 
 
 

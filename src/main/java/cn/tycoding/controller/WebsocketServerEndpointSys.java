@@ -61,7 +61,7 @@ public class WebsocketServerEndpointSys {
      * @param conversation_id
      */
     @OnOpen
-    public void onOpen(Session session,@PathParam("conversation_id") String conversation_id) {
+    public void onOpen(Session session,@PathParam("conversation_id") String conversation_id) throws IOException {
         log.info("onOpen >> 链接成功");
         //从token获取用户数据
 //        User tokenUser = TokenUtils.getUser(token);

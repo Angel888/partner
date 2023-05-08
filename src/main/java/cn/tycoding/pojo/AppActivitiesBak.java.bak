@@ -1,0 +1,79 @@
+package cn.tycoding.pojo;
+
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.*;
+
+@Slf4j
+@Data
+//todo 这两个注解有必要有吗？
+@Configuration//注册bean到容器中
+@ConfigurationProperties(prefix = "application")
+@EnableConfigurationProperties
+public class Activities {
+    public  List<Activities> activities ;
+    // 试试不用@Getter和@Setter行吗？
+    @Data
+    public static class Activities {
+        private String scheme;
+        private List<Field> fields;
+
+        @Override
+        public String toString() {
+            return "Activity{" +
+                    "scheme='" + scheme + '\'' +
+                    ", fields=" + fields +
+                    '}';
+        }
+    }
+
+    @Setter
+    @Getter
+    public static class Field {
+        private String name;
+        private String question;
+        private List<String> options;
+
+        @Override
+        public String toString() {
+            return "Field{" +
+                    "name='" + name + '\'' +
+                    ", question='" + question + '\'' +
+                    ", options='" + options + '\'' +
+                    '}';
+        }
+    }
+//    public static class Option{
+//
+//    }
+
+    @Override
+    public String toString() {
+        return "AppActivities{" +
+                "activities=" + activities +
+                '}';
+    }
+    public ArrayList<String> GetScheme(){
+        ArrayList<String> res=new ArrayList<String>();
+        ArrayList<Activities.Activities> aa= (ArrayList<Activities.Activities>) this.getActivities(); // 类的转化
+        log.info("this.getActivities()---",this.getActivities().toString());
+        // todo aa是null?
+        for( Activities.Activities  xx: aa){
+            res.add(xx.getScheme());
+        }
+        return res;
+    }
+
+    public String CheckOptions(Field field){
+         if ( field.options !=null){
+            return field.question+"\n"+field.options;
+        }
+         return field.question;
+    }
+}
+
+
