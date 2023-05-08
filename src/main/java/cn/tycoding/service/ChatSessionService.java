@@ -2,6 +2,7 @@ package cn.tycoding.service;
 
 import cn.tycoding.dto.WsMessage;
 import cn.tycoding.pojo.AppActivities;
+import cn.tycoding.pojo.Field;
 import cn.tycoding.util.R;
 import com.alibaba.fastjson.JSON;
 import constant.CommonConstant;
@@ -27,11 +28,8 @@ public class ChatSessionService {
     private Session session;
     private Integer conversationTimes = 0;
     private String fromId = "";
-    private final List<AppActivities.Activity> activities = appActivities.getActivities(); // activity列表
-
-    private final ArrayList<String> schemes = appActivities.GetScheme(); //获取scheme列表
     private String scheme;
-    private List<AppActivities.Field> fieldList;
+    private List<Field> fieldList;
     private String ConversationId ;
 
     /**
@@ -69,7 +67,7 @@ public class ChatSessionService {
             message.setTo(conversation_id);
             message.setFrom(this.session.getId());
             message.setMessage("活动类型？"); //todo 需要把list转为string吗？
-            message.setOptions(schemes);
+            message.setOptions(appActivities.GetScheme());
         String messageStr = JSON.toJSONString(message);
         SendMessage(messageStr);
         return null;
@@ -80,7 +78,7 @@ public class ChatSessionService {
 //        this.rightPush(this.fromId, message);
         if (conversationTimes == 0) {
             this.scheme = message;
-            activities.forEach(item -> {
+            appActivities.getActivities().forEach(item -> {
                 if (item.getScheme() == this.scheme) {
                     this.fieldList = item.getFields();
                 }
@@ -97,7 +95,7 @@ public class ChatSessionService {
         }
     }
 
-    public String ConstructWsMessage(AppActivities.Field field ){
+    public String ConstructWsMessage(Field field ){
         WsMessage message = new WsMessage();
         if (field.getOptions()!=null){
             message.setOptions(field.getOptions());

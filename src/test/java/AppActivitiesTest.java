@@ -23,6 +23,11 @@ class AppActivitiesTest {
     void contextLoads() {
         System.out.println(Arrays.toString(appActivities.getActivities().toArray())); //打印看下person对象
     }
+
+    @Test
+    void contextLoadsDebug() {
+        System.out.println(appActivities.getDebug()); //打印看下person对象
+    }
 //    @Test
 //    void getArray(){
 //        System.out.println(appActivities.getActivities().getClass());
