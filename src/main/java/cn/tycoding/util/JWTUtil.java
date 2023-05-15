@@ -1,18 +1,18 @@
 package cn.tycoding.util;
 
 
-
+import cn.tycoding.dto.ResponseCodeEnums;
+import cn.tycoding.dto.ResponseInfo;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 
 /**
@@ -26,15 +26,17 @@ import java.util.stream.Collectors;
  * signature的生成算法：
  * HMACSHA512(base64UrlEncode(header) + "." +base64UrlEncode(payload),secret)
  */
+@Slf4j
 @Component
+@Data
 @ConfigurationProperties(prefix = "jwt-config.yml")
-public class JWTUtils {
+public class JWTUtil {
 
     // 定义token返回头部
     public static String header;
     public static final String SIGNATURE = "miyao";
     //token前缀
-    public static String tokenPrefix="token";
+    public static String tokenPrefix;
 
     //签名密钥
     public static String secret;
@@ -46,20 +48,20 @@ public class JWTUtils {
     public static final String USER_LOGIN_TOKEN = "USER_LOGIN_TOKEN";
 
     public void setHeader(String header) {
-        JWTUtils.header = header;
+        JWTUtil.header = header;
     }
 
     public void setTokenPrefix(String tokenPrefix) {
-        JWTUtils.tokenPrefix = tokenPrefix;
+        JWTUtil.tokenPrefix = tokenPrefix;
     }
 
 
     public void setSecret(String secret) {
-        JWTUtils.secret = secret;
+        JWTUtil.secret = secret;
     }
 
     public void setExpireTime(int expireTimeInt) {
-        JWTUtils.expireTime = expireTimeInt*1000L*60;
+        JWTUtil.expireTime = expireTimeInt * 1000L * 60;
     }
 
     /**
@@ -75,30 +77,32 @@ public class JWTUtils {
 //    }
 
 
-
     /**
      * 验证token DecodedJWT 为解密之后的对象 可以获取payload中添加的数据
      */
-    public static DecodedJWT verifyToken(String token) {
-//        进行token的校验,注意使用同样的算法和同样的秘钥
-        return JWT.require(Algorithm.HMAC512(SIGNATURE)).build().verify(token); //todo 根据这个方法构造一个token
-        return null;
-    }
+//    public static DecodedJWT verifyToken(String token) {
+////        进行token的校验,注意使用同样的算法和同样的秘钥
+//        return JWT.require(Algorithm.HMAC256(SIGNATURE)).build().verify(token); //todo 根据这个方法构造一个token
+//    }
 //    原文链接：https://blog.csdn.net/weixin_46649054/article/details/117340735
+
     /**
      * 验证token
+     *
      * @param token
      */
-    public static String validateToken(String token){
+    public static String validateToken(String token) {
         try {
             return JWT.require(Algorithm.HMAC512(secret))
                     .build()
                     .verify(token.replace(tokenPrefix, ""))
                     .getSubject();
-        } catch (TokenExpiredException e){
-            throw new ApiException(ResultInfo.unauthorized("token已经过期"));
-        } catch (Exception e){
-            throw new ApiException(ResultInfo.unauthorized("token验证失败"));
+        } catch (TokenExpiredException e) {
+            log.error("token已经过期");
+            return null;
+        } catch (Exception e) {
+            log.error("token验证失败");
+            return null;
         }
     }
 

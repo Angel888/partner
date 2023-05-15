@@ -6,6 +6,12 @@ spring:
       exclude: WEB-INF/**  #排除文件(不重启项目)
   freemarker:
     cache: false    #页面不加载缓存，修改即时生效
+  mongodb:
+    host: 175.24.177.144
+    port: 27017
+    database: dazi
+    username: admin
+    password: admin123hhh
 #  redis:
 #    database: 1
 #    host: 127.0.0.1
@@ -71,13 +77,9 @@ application:
             - 羽毛球
             - 乒乓球
 #             可以增加默认选项
+#  todo  如果填写的内容不在选项中，则可以新增，那么怎么判断填的内容是否符合要求呢？
 
-name: test-YAML
-environment: testing
-enabled: false
-servers:
-  - www.abc.test.com
-  - www.xyz.test.com
+
 
 
 

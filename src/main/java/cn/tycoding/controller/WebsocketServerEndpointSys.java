@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.websocket.*;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.websocket.*;
+import jakarta.websocket.server.PathParam;
+import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -69,7 +69,7 @@ public class WebsocketServerEndpointSys {
 
         websocketServerEndpointSys.add(this);
 
-        chatSessionService.OnOpenSys(conversation_id,session);
+        chatSessionService.OnOpenSys(conversation_id, session);
 
         // 暂时不需要获取用户信息
 //        try {
@@ -87,9 +87,9 @@ public class WebsocketServerEndpointSys {
      * 链接关闭调用的方法
      */
     @OnClose
-    public void onClose() {
+    public void onClose() throws IOException {
         log.info("onClose >> 链接关闭");
-
+        chatSessionService.OnCloseSys();
         //移除当前Websocket对象
         websocketServerEndpointSys.remove(this);
 
