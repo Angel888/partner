@@ -1,6 +1,7 @@
 package cn.tycoding.service;
 
 import cn.tycoding.dto.WsMessage;
+import cn.tycoding.pojo.Activity;
 import cn.tycoding.pojo.AppActivities;
 import cn.tycoding.pojo.Field;
 import cn.tycoding.util.R;
@@ -9,10 +10,12 @@ import constant.CommonConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -21,16 +24,17 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ChatSessionService {
-
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     private final StringRedisTemplate redisTemplate;
-    private  final AppActivities appActivities;  //todo 可以不加@Autowired，使用final吗？
+    private final AppActivities appActivities;  //todo 可以不加@Autowired，使用final吗？
     private Session session;
     private Integer conversationTimes = 0;
     private String fromId = "";
     private String scheme;
     private List<Field> fieldList;
-    private String ConversationId ;
+    private String ConversationId;
 
     /**
      * 推送消息
@@ -41,9 +45,10 @@ public class ChatSessionService {
     public void SendMessage(String message) throws IOException {
         this.session.getBasicRemote().sendText(message);
     }
-// todo 因为SendMessage有IOException，所以OnOpenSys和引用OnOpenSys的onOpen都得有吗？这样是不是不优雅？？
+
+    // todo 因为SendMessage有IOException，所以OnOpenSys和引用OnOpenSys的onOpen都得有吗？这样是不是不优雅？？
     public R OnOpenSys(String conversation_id, Session session) throws IOException {
-        this.ConversationId=ConversationId;
+        this.ConversationId = ConversationId;
         this.session = session;  //todo 这个session为什么不需要初始化？
         // 通过stream流收集的方式
 //        List<String> schemes = this.appActivities.getActivities().stream().map(AppActivities.Activity::getScheme).collect(Collectors.toList());
@@ -59,15 +64,15 @@ public class ChatSessionService {
 
         WsMessage message;
 //            SendMessage((String)this.schemes[conversationTimes]);
-            message = new WsMessage();
-            message.setSessionId(this.session.getId());
-            message.setTimestamp(String.valueOf(System.currentTimeMillis()));
-            message.setMsgId(conversation_id);
-            message.setFrom(String.valueOf(1));
-            message.setTo(conversation_id);
-            message.setFrom(this.session.getId());
-            message.setMessage("活动类型？"); //todo 需要把list转为string吗？
-            message.setOptions(appActivities.GetScheme());
+        message = new WsMessage();
+        message.setSessionId(this.session.getId());
+        message.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        message.setMsgId(conversation_id);
+        message.setFrom(String.valueOf(1));
+        message.setTo(conversation_id);
+        message.setFrom(this.session.getId());
+        message.setMessage("活动类型？"); //todo 需要把list转为string吗？
+        message.setOptions(appActivities.GetScheme());
         String messageStr = JSON.toJSONString(message);
         SendMessage(messageStr);
         return null;
@@ -78,26 +83,36 @@ public class ChatSessionService {
 //        this.rightPush(this.fromId, message);
         if (conversationTimes == 0) {
             this.scheme = message;
-            appActivities.getActivities().forEach(item -> {
-                if (item.getScheme() == this.scheme) {
+            List<Activity> activities = appActivities.getActivities();
+            for (Activity item : activities) {
+                log.info("{}=={}?", item.getScheme(), this.scheme);
+                if (Objects.equals(item.getScheme(), this.scheme)) { //todo 判断一致可以直接用==吗？
                     this.fieldList = item.getFields();
+                    try {
+                        this.SendMessage(this.fieldList.get(0).getQuestion());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    conversationTimes+=1;
+                    return;
                 }
-                try {
-                    this.SendMessage(this.fieldList.get(0).getQuestion());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }else if (conversationTimes < this.fieldList.size()) {
+            }
+            this.SendMessage("未查到符合要求的活动类型，请重新输入~"); // todo 触发条件？
+        } else if (conversationTimes < this.fieldList.size()) {
             ConstructWsMessage(this.fieldList.get(conversationTimes));
             this.SendMessage(this.fieldList.get(conversationTimes).getQuestion());
             this.conversationTimes += 1;
+        }else{
+            return;
         }
     }
 
-    public String ConstructWsMessage(Field field ){
+    public void OnCloseSys() throws IOException {
+        SendMessage("bye~~");
+    }
+    public String ConstructWsMessage(Field field) {
         WsMessage message = new WsMessage();
-        if (field.getOptions()!=null){
+        if (field.getOptions() != null) {
             message.setOptions(field.getOptions());
 
         }
@@ -132,8 +147,6 @@ public class ChatSessionService {
     public void rightPush(String keyName, String valueName) {
         redisTemplate.opsForList().rightPush(keyName, valueName);  //todo  这种的需要抛出异常吗
     }
-
-
 
 
 }
