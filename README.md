@@ -1,3 +1,5 @@
+# partner
+
 刷新页面时，传输一个token，调用init接口，jwt解析，获取用户信息
 ws://localhost:8080/chat/  主动链接websocket
 使用 Sec-WebSocket-Protocol 传递消息  
