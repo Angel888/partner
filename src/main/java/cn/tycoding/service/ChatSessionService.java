@@ -10,7 +10,7 @@ import constant.CommonConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
+//import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +24,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ChatSessionService {
-    @Autowired
-    private MongoTemplate mongoTemplate;
+//    @Autowired
+//    private MongoTemplate mongoTemplate;
 
     private final StringRedisTemplate redisTemplate;
     private final AppActivities appActivities;  //todo 可以不加@Autowired，使用final吗？

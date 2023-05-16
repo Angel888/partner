@@ -69,6 +69,7 @@ public class JWTUtil {
      * @param sub
      * @return
      */
+    //这个逻辑可能有用 先不删
 //    public static String createToken(String sub){
 //        return tokenPrefix + JWT.create()
 //                .withSubject(sub)
@@ -77,13 +78,6 @@ public class JWTUtil {
 //    }
 
 
-    /**
-     * 验证token DecodedJWT 为解密之后的对象 可以获取payload中添加的数据
-     */
-//    public static DecodedJWT verifyToken(String token) {
-////        进行token的校验,注意使用同样的算法和同样的秘钥
-//        return JWT.require(Algorithm.HMAC256(SIGNATURE)).build().verify(token); //todo 根据这个方法构造一个token
-//    }
 //    原文链接：https://blog.csdn.net/weixin_46649054/article/details/117340735
 
     /**
@@ -111,6 +105,7 @@ public class JWTUtil {
      * @param token
      * @return
      */
+    //这个逻辑可能有用 先不删
 //    public static boolean isNeedUpdate(String token){
 //        //获取token过期时间
 //        Date expiresAt = null;

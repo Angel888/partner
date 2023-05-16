@@ -30,7 +30,7 @@ public class WebsocketServerEndpointSys {
     }
 //    log.info() // todo 既然是先装配再构造为什么不能使用log.info()
 
-    // 这段构造器注入有bug
+    // 这段构造器注入有bug  //todo 回头去掉注释再研究一下
 //    {
 //    private final StringRedisTemplate redisTemplate;
 //
@@ -44,16 +44,6 @@ public class WebsocketServerEndpointSys {
     //在线连接数
     private static long online = 0;
 
-    //用于存放当前Websocket对象的Set集合
-
-    //与客户端的会话Session
-
-
-    //当前会话窗口ID  用户和系统交互时，会话id即用户id，当会话结束后，信息会被清除
-
-
-
-
 
     /**
      * 链接成功调用的方法
@@ -63,24 +53,10 @@ public class WebsocketServerEndpointSys {
     @OnOpen
     public void onOpen(Session session,@PathParam("conversation_id") String conversation_id) throws IOException {
         log.info("onOpen >> 链接成功");
-        //从token获取用户数据
-//        User tokenUser = TokenUtils.getUser(token);
-//        Integer userId = Math.toIntExact(tokenUser.getId());
 
         websocketServerEndpointSys.add(this);
 
         chatSessionService.OnOpenSys(conversation_id, session);
-
-        // 暂时不需要获取用户信息
-//        try {
-//            User user = chatSessionService.findById(fromId);
-//            //群发消息
-//            Map<String, Object> map = new HashMap<>();
-//            map.put("msg", "用户 " + user.getName() + " 已上线");
-//            sendMore(JSONObject.toJSONString(map));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     /**
@@ -122,23 +98,6 @@ public class WebsocketServerEndpointSys {
 
 
     /**
-     * 封装返回消息
-     *
-     * @param toId    指定窗口ID
-     * @param message 消息内容
-     * @return
-     * @throws IOException
-     */
-//    private String getData(String toId, String message) throws IOException {
-//        Message entity = new Message();
-//        entity.setMessage(message);
-//        entity.setTime(CoreUtil.format(new Date()));
-//        entity.setFrom(chatSessionService.findById(conversation_id));
-//        entity.setTo(chatSessionService.findById(toId));
-//        return JSONObject.toJSONString(new R(entity));
-//    }
-
-    /**
      * 群发消息
      *
      * @param data
@@ -153,37 +112,7 @@ public class WebsocketServerEndpointSys {
         }
     }
 
-    /**
-     * 指定窗口推送消息
-     *
-//     * @param entity 推送消息
-//     * @param toId   接收方ID
-     */
-    //todo
-//    public void sendTo(String toId, Message entity) {
-//        fromId = entity.getFrom().getId().toString();
-//        if (websocketServerEndpointSys.size() <= 1) {
-//            throw new GlobalException("用户未上线");
-//        }
-//        boolean flag = false;
-//        for (WebsocketServerEndpointSys endpoint : websocketServerEndpointSys) {
-//            try {
-//                if (endpoint.fromId.equals(toId)) {
-//                    flag = true;
-//                    log.info(entity.getFrom().getId() + " 推送消息到窗口：" + toId + " ，推送内容：" + entity.getMessage());
-//
-//                    chatSessionService.SendMessage(getData(toId, entity.getMessage()));
-//                    chatSessionService.pushMessage(fromId, toId, entity.getMessage());
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                continue;
-//            }
-//        }
-//        if (!flag) {
-//            throw new GlobalException("推送失败，找不到该窗口");
-//        }
-//    }
+
 
     private void subOnLineCount() {
         WebsocketServerEndpointSys.online--;
